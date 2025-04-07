@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Título ligeramente actualizado -->
     <title>Aventura del Capibara</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Fuente Pixelada (Opcional, pero da el toque 90s) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Título del juego -->
     <h1>Aventura del Capibara</h1>
 
-    <!-- Div para mostrar puntuación Y nivel -->
     <div id="game-info">
         <span>PUNTOS: <span id="score">0</span></span>
-        <!-- Separador visual simple -->
         <span class="separator">|</span>
         <span>NIVEL: <span id="level">1</span></span>
     </div>
 
-    <!-- El canvas donde ocurre el juego -->
     <div id="canvas-container">
          <canvas id="gameCanvas" width="400" height="500"></canvas>
-         <!-- El mensaje de Game Over se posicionará relativo a este contenedor -->
+         <!-- Mensaje Game Over aquí -->
     </div>
 
-    <!-- Instrucciones simples -->
     <p id="instructions">Usa ⬅️ y ➡️ para moverte. Clic para reiniciar si pierdes.</p>
 
-    <!-- Script del juego -->
+    <!-- Etiqueta de Audio para la música de fondo -->
+    <!-- ASEGÚRATE de que el 'src' coincida con el nombre EXACTO de tu archivo de música -->
+    <audio id="background-music" src="game-music.mp3" loop preload="auto"></audio>
+    <!-- Si tu archivo es mp3, usa: <audio id="background-music" src="game-music.mp3" loop preload="auto"></audio> -->
+
     <script src="script.js"></script>
 </body>
 </html>
