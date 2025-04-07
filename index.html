@@ -2,23 +2,25 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Viewport meta tag es CRUCIAL para responsividad en móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Aventura del Capibara</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Evitar zoom táctil accidental -->
+    <style> body { touch-action: manipulation; } </style>
 </head>
 <body>
     <h1>Aventura del Capibara</h1>
 
-    <div id="game-ui-top"> <!-- Nuevo contenedor para info y botón -->
+    <div id="game-ui-top">
         <div id="game-info">
             <span>PUNTOS: <span id="score">0</span></span>
             <span class="separator">|</span>
             <span>NIVEL: <span id="level">1</span></span>
         </div>
-        <!-- Botón para silenciar/activar música -->
         <button id="mute-button">🔊 Mute</button>
     </div>
 
@@ -27,9 +29,15 @@
          <!-- Mensaje Game Over aquí -->
     </div>
 
-    <p id="instructions">Usa ⬅️ y ➡️ para moverte. Clic para reiniciar si pierdes.</p>
+    <!-- Controles Táctiles -->
+    <div id="touch-controls">
+        <div class="touch-button" id="touch-left">⬅️</div>
+        <div class="touch-button" id="touch-right">➡️</div>
+    </div>
 
-    <!-- Etiqueta de Audio (sin cambios) -->
+    <p id="instructions">Usa ⬅️ y ➡️ o toca los controles. Clic/Tap para reiniciar.</p>
+
+    <!-- Etiqueta de Audio -->
     <audio id="background-music" src="game-music.mp3" loop preload="auto"></audio>
     <!-- O: <audio id="background-music" src="game-music.mp3" loop preload="auto"></audio> -->
 

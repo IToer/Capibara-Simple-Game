@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Iniciando Aventura del Capibara v1.4 (Botón Mute)...");
+    console.log("Iniciando Aventura del Capibara v1.5 (Controles Táctiles)...");
 
     // --- Obtener Elementos del DOM ---
     const canvas = document.getElementById('gameCanvas');
@@ -7,12 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreElement = document.getElementById('score');
     const levelElement = document.getElementById('level');
     const backgroundMusic = document.getElementById('background-music');
-    const muteButton = document.getElementById('mute-button'); // <-- Obtener el botón mute
+    const muteButton = document.getElementById('mute-button');
+    // Obtener botones táctiles
+    const touchLeftButton = document.getElementById('touch-left');
+    const touchRightButton = document.getElementById('touch-right');
 
     // Validaciones de elementos...
     if (!canvas || !instructions || !scoreElement || !levelElement) { /* ... Error ... */ return; }
-    if (!backgroundMusic) { console.warn("Elemento audio 'background-music' no encontrado. Sin música."); }
-    if (!muteButton) { console.warn("Botón 'mute-button' no encontrado. No se podrá silenciar."); } // Advertir si falta el botón
+    if (!touchLeftButton || !touchRightButton) { console.warn("Botones táctiles no encontrados. El control táctil no funcionará."); }
+    if (!backgroundMusic) { console.warn("Elemento audio no encontrado. Sin música."); }
+    if (!muteButton) { console.warn("Botón mute no encontrado."); }
     const ctx = canvas.getContext('2d');
     if (!ctx) { /* ... Error Contexto ... */ return; }
 
@@ -28,79 +32,76 @@ document.addEventListener('DOMContentLoaded', () => {
     let capybaraX; let objects; let score; let level; let objectSpeed;
     let isGameOver; let animationFrameId = null; let spawnIntervalId = null;
     let gameOverMessageElement = null; let keys = {};
-    let musicStarted = false;
-    let isMuted = false; // <-- Estado de silencio
+    let musicStarted = false; let isMuted = false;
 
-    // --- Inicializar Estado Mute desde localStorage ---
-    function initializeMuteState() {
-        const savedMuteState = localStorage.getItem('capybaraGameMuted');
-        // Si hay un valor guardado y es 'true', establecer isMuted
-        isMuted = (savedMuteState === 'true');
-        console.log("Estado Mute inicial:", isMuted);
-        // Aplicar estado inicial al elemento de audio si existe
-        if (backgroundMusic) {
-            backgroundMusic.muted = isMuted;
+    // --- Inicializar Estado Mute (sin cambios) ---
+    function initializeMuteState() { /* ... igual que antes ... */ }
+     // (Código completo para referencia)
+     function initializeMuteState() { const savedMuteState = localStorage.getItem('capybaraGameMuted'); isMuted = (savedMuteState === 'true'); console.log("Estado Mute inicial:", isMuted); if (backgroundMusic) { backgroundMusic.muted = isMuted; } updateMuteButtonText(); }
+
+    // --- Actualizar Texto Botón Mute (sin cambios) ---
+    function updateMuteButtonText() { /* ... igual que antes ... */ }
+     // (Código completo para referencia)
+     function updateMuteButtonText() { if (muteButton) { muteButton.textContent = isMuted ? '🔇 Unmute' : '🔊 Mute'; } }
+
+    // --- Control de Teclado ---
+    window.addEventListener('keydown', (e) => {
+        if (!isGameOver && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+            keys[e.key] = true;
+            e.preventDefault();
+            // Intentar iniciar música en la primera interacción de teclado
+            if (!musicStarted) {
+                console.log("Intentando iniciar música por tecla...");
+                playAudio();
+            }
         }
-        // Actualizar texto del botón si existe
-        updateMuteButtonText();
-    }
-
-    // --- Actualizar Texto del Botón Mute ---
-    function updateMuteButtonText() {
-        if (muteButton) {
-            muteButton.textContent = isMuted ? '🔇 Unmute' : '🔊 Mute';
-        }
-    }
-
-    // --- Control de Teclado (sin cambios) ---
-    window.addEventListener('keydown', (e) => { if (!isGameOver && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { keys[e.key] = true; e.preventDefault(); if (!musicStarted) { console.log("Intentando iniciar música por tecla..."); playAudio(); } } });
+    });
     window.addEventListener('keyup', (e) => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { keys[e.key] = false; } });
 
-    // --- Event Listener para el Botón Mute ---
-    if (muteButton) {
-        muteButton.addEventListener('click', () => {
-            isMuted = !isMuted; // Invertir estado
-            if (backgroundMusic) {
-                backgroundMusic.muted = isMuted; // Aplicar al audio
+    // --- Control Táctil ---
+    function handleTouchStart(event, key) {
+        event.preventDefault(); // Prevenir comportamiento táctil por defecto (scroll, zoom)
+        if (!isGameOver) {
+            keys[key] = true; // Simular presión de tecla
+            // Intentar iniciar música en la primera interacción táctil
+            if (!musicStarted) {
+                console.log("Intentando iniciar música por toque...");
+                playAudio();
             }
-            updateMuteButtonText(); // Actualizar texto del botón
-            localStorage.setItem('capybaraGameMuted', isMuted); // Guardar preferencia
-            console.log("Estado Mute cambiado a:", isMuted);
-
-            // Si estamos activando el sonido y la música no había iniciado, intentar iniciarla
-            if (!isMuted && !musicStarted) {
-                 console.log("Intentando iniciar música al desmutear...");
-                 playAudio(); // Intentar iniciarla, necesita interacción previa igualmente
-            }
-        });
-    }
-
-    // --- Funciones de Control de Audio (playAudio no necesita cambios aquí) ---
-    function playAudio() {
-        if (backgroundMusic && !musicStarted) {
-            // Asegurarse de respetar el estado mute al intentar iniciar
-             backgroundMusic.muted = isMuted;
-             const playPromise = backgroundMusic.play();
-             if (playPromise !== undefined) {
-                 playPromise.then(() => {
-                     console.log("Música iniciada con éxito."); musicStarted = true;
-                     // Volver a aplicar mute por si acaso cambió mientras se iniciaba
-                     backgroundMusic.muted = isMuted;
-                 }).catch(error => {
-                     console.warn("playAudio() bloqueado:", error.name); musicStarted = false;
-                 });
-             } // else ... (manejo alternativo)
-        } else if (backgroundMusic && musicStarted && backgroundMusic.paused) {
-             // Reanudar respetando el mute
-             backgroundMusic.muted = isMuted;
-             backgroundMusic.play().catch(error => console.error("Error al reanudar música:", error));
-             console.log("Reanudando música...");
         }
     }
-    // pauseAudio y stopAndResetAudio no necesitan cambios
+
+    function handleTouchEnd(event, key) {
+        event.preventDefault();
+        keys[key] = false; // Simular liberación de tecla
+    }
+
+    // Añadir listeners táctiles si los botones existen
+    if (touchLeftButton) {
+        touchLeftButton.addEventListener('touchstart', (e) => handleTouchStart(e, 'ArrowLeft'), { passive: false });
+        touchLeftButton.addEventListener('touchend', (e) => handleTouchEnd(e, 'ArrowLeft'), { passive: false });
+        touchLeftButton.addEventListener('touchcancel', (e) => handleTouchEnd(e, 'ArrowLeft'), { passive: false }); // Por si se interrumpe el toque
+    }
+    if (touchRightButton) {
+        touchRightButton.addEventListener('touchstart', (e) => handleTouchStart(e, 'ArrowRight'), { passive: false });
+        touchRightButton.addEventListener('touchend', (e) => handleTouchEnd(e, 'ArrowRight'), { passive: false });
+        touchRightButton.addEventListener('touchcancel', (e) => handleTouchEnd(e, 'ArrowRight'), { passive: false });
+    }
+
+
+    // --- Event Listener Botón Mute (sin cambios) ---
+    if (muteButton) { /* ... igual que antes ... */ }
+    // (Código completo para referencia)
+    if (muteButton) { muteButton.addEventListener('click', () => { isMuted = !isMuted; if (backgroundMusic) { backgroundMusic.muted = isMuted; } updateMuteButtonText(); localStorage.setItem('capybaraGameMuted', isMuted); console.log("Estado Mute cambiado a:", isMuted); if (!isMuted && !musicStarted) { console.log("Intentando iniciar música al desmutear..."); playAudio(); } }); }
+
+    // --- Funciones Control Audio (sin cambios) ---
+    function playAudio() { /* ... igual que antes ... */ }
+    function pauseAudio() { /* ... igual que antes ... */ }
+    function stopAndResetAudio() { /* ... igual que antes ... */ }
+    // (Código completo para referencia)
+    function playAudio() { if (backgroundMusic && !musicStarted) { backgroundMusic.muted = isMuted; const playPromise = backgroundMusic.play(); if (playPromise !== undefined) { playPromise.then(() => { console.log("Música iniciada."); musicStarted = true; backgroundMusic.muted = isMuted; }).catch(error => { console.warn("playAudio() bloqueado:", error.name); musicStarted = false; }); } } else if (backgroundMusic && musicStarted && backgroundMusic.paused) { backgroundMusic.muted = isMuted; backgroundMusic.play().catch(error => console.error("Error al reanudar música:", error)); console.log("Reanudando música..."); } }
     function pauseAudio() { if (backgroundMusic && !backgroundMusic.paused) { backgroundMusic.pause(); console.log("Música pausada."); } }
     function stopAndResetAudio() { if (backgroundMusic) { backgroundMusic.pause(); backgroundMusic.currentTime = 0; musicStarted = false; console.log("Música detenida y reseteada."); } }
-
 
     // --- Funciones de Dibujo (sin cambios) ---
     function drawCapybara() { /* ... */ }
@@ -122,54 +123,33 @@ document.addEventListener('DOMContentLoaded', () => {
      function updatePlayer() { if (keys['ArrowLeft'] && capybaraX > 0) { capybaraX -= capybaraSpeed; if (capybaraX < 0) capybaraX = 0; } if (keys['ArrowRight'] && capybaraX < canvasWidth - capybaraWidth) { capybaraX += capybaraSpeed; if (capybaraX > canvasWidth - capybaraWidth) capybaraX = canvasWidth - capybaraWidth; } }
      function updateObjects() { for (let i = objects.length - 1; i >= 0; i--) { const obj = objects[i]; obj.y += objectSpeed; if ( capybaraX < obj.x + obj.width && capybaraX + capybaraWidth > obj.x && capybaraY < obj.y + obj.height && capybaraY + capybaraHeight > obj.y ) { if (obj.isObstacle) { console.log(`¡COLISIÓN con ${obj.type}!`); gameOver(); return; } else { score += 10; scoreElement.textContent = score; console.log(`¡MONEDA recogida! Puntos: ${score}`); objects.splice(i, 1); if (score > 0 && score % scorePerLevel === 0) { level++; levelElement.textContent = level; objectSpeed += speedIncrementPerLevel; console.log(`¡NIVEL ${level} ALCANZADO! Velocidad aumentada a: ${objectSpeed.toFixed(2)}`); } } } if (obj.y > canvasHeight) { objects.splice(i, 1); } } }
 
-
     // --- Funciones de Control de Estado del Juego ---
-    function showGameOverMessage() { /* ... sin cambios ... */ }
-    function hideGameOverMessage() { /* ... sin cambios ... */ }
-    function gameOver() { /* ... sin cambios ... */ }
-    function restartGame() { /* ... sin cambios ... */ }
-    function gameLoop() { /* ... sin cambios ... */ }
+    // Modificado showGameOverMessage para permitir tap en canvas para reiniciar
+    function showGameOverMessage() {
+        if (!gameOverMessageElement) { gameOverMessageElement = document.createElement('div'); gameOverMessageElement.textContent = '¡HAS PERDIDO!'; gameOverMessageElement.className = 'game-over-text'; document.body.appendChild(gameOverMessageElement); }
+        gameOverMessageElement.style.display = 'block'; const canvasRect = canvas.getBoundingClientRect(); const messageTop = canvasRect.top + canvasHeight * 0.5; const messageLeft = canvasRect.left + canvasWidth / 2;
+        gameOverMessageElement.style.top = `${messageTop}px`; gameOverMessageElement.style.left = `${messageLeft}px`; gameOverMessageElement.style.transform = 'translate(-50%, -50%)';
+        instructions.textContent = "¡Clic/Tap en pantalla para jugar de nuevo!";
+        // Usar 'click' funciona para mouse Y tap en la mayoría de los casos
+        canvas.addEventListener('click', restartGame, { once: true });
+        console.log("Mensaje Game Over mostrado. Listener de reinicio (click/tap) añadido.");
+    }
+    function hideGameOverMessage() { /* ... igual que antes ... */ }
+    function gameOver() { /* ... igual que antes ... */ }
+    function restartGame() { /* ... igual que antes ... */ }
+    function gameLoop() { /* ... igual que antes ... */ }
+    function startGame() { /* ... igual que antes ... */ }
     // (Código completo para referencia)
-    function showGameOverMessage() { if (!gameOverMessageElement) { gameOverMessageElement = document.createElement('div'); gameOverMessageElement.textContent = '¡HAS PERDIDO!'; gameOverMessageElement.className = 'game-over-text'; document.body.appendChild(gameOverMessageElement); } gameOverMessageElement.style.display = 'block'; const canvasRect = canvas.getBoundingClientRect(); const messageTop = canvasRect.top + canvasHeight * 0.5; const messageLeft = canvasRect.left + canvasWidth / 2; gameOverMessageElement.style.top = `${messageTop}px`; gameOverMessageElement.style.left = `${messageLeft}px`; gameOverMessageElement.style.transform = 'translate(-50%, -50%)'; instructions.textContent = "¡Clic en la pantalla para jugar de nuevo!"; canvas.addEventListener('click', restartGame, { once: true }); console.log("Mensaje Game Over mostrado. Listener de reinicio añadido."); }
-    function hideGameOverMessage() { if (gameOverMessageElement) { gameOverMessageElement.style.display = 'none'; } instructions.textContent = "Usa ⬅️ y ➡️ para moverte. Clic para reiniciar si pierdes."; }
+    function hideGameOverMessage() { if (gameOverMessageElement) { gameOverMessageElement.style.display = 'none'; } instructions.textContent = "Usa ⬅️ y ➡️ o toca los controles. Clic/Tap para reiniciar."; }
     function gameOver() { console.log("Función gameOver ejecutada."); isGameOver = true; stopAndResetAudio(); if (spawnIntervalId) { clearInterval(spawnIntervalId); spawnIntervalId = null; console.log("Intervalo de spawn detenido."); } if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; console.log("Animación detenida."); } showGameOverMessage(); }
     function restartGame() { console.log("--- REINICIANDO JUEGO ---"); hideGameOverMessage(); startGame(); }
     function gameLoop() { if (isGameOver) return; updatePlayer(); updateObjects(); if (isGameOver) return; drawBackground(); drawCapybara(); objects.forEach(obj => { if (obj.type === 'coin') drawCoin(obj); else drawObstacle(obj); }); animationFrameId = requestAnimationFrame(gameLoop); }
+    function startGame() { console.log("Iniciando/Reiniciando..."); capybaraX = (canvasWidth - capybaraWidth) / 2; objects = []; score = 0; level = 1; objectSpeed = initialObjectSpeed; isGameOver = false; keys = {}; stopAndResetAudio(); scoreElement.textContent = score; levelElement.textContent = level; updateMuteButtonText(); if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; } if (spawnIntervalId) { clearInterval(spawnIntervalId); spawnIntervalId = null; } spawnIntervalId = setInterval(spawnObject, spawnIntervalTime); console.log(`Spawn ID: ${spawnIntervalId}`); animationFrameId = requestAnimationFrame(gameLoop); console.log(`Anim ID: ${animationFrameId}`); console.log(`Velocidad: ${objectSpeed.toFixed(2)}`); console.log("Intentando iniciar/reanudar música..."); playAudio(); }
 
-
-    function startGame() {
-        console.log("Iniciando/Reiniciando variables y procesos...");
-        // Resetear estado del juego
-        capybaraX = (canvasWidth - capybaraWidth) / 2; objects = []; score = 0; level = 1;
-        objectSpeed = initialObjectSpeed; isGameOver = false; keys = {};
-
-        // Resetear estado de audio (permite reintentar inicio)
-        // La preferencia de mute (isMuted) se mantiene
-        stopAndResetAudio(); // Esto resetea musicStarted a false
-
-        // Actualizar UI
-        scoreElement.textContent = score; levelElement.textContent = level;
-        updateMuteButtonText(); // Asegurar que el botón muestre el estado correcto
-
-        // Limpiar procesos anteriores
-        if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
-        if (spawnIntervalId) { clearInterval(spawnIntervalId); spawnIntervalId = null; }
-
-        // Iniciar nuevos procesos
-        spawnIntervalId = setInterval(spawnObject, spawnIntervalTime);
-        console.log(`Intervalo de spawn iniciado (ID: ${spawnIntervalId})`);
-        animationFrameId = requestAnimationFrame(gameLoop);
-        console.log(`Bucle de animación iniciado (ID: ${animationFrameId})`);
-        console.log(`Velocidad inicial: ${objectSpeed.toFixed(2)}`);
-
-        // Intentar iniciar audio (respetando el estado isMuted)
-         console.log("Intentando iniciar/reanudar música al empezar/reiniciar...");
-         playAudio();
-    }
 
     // --- Inicialización ---
-    initializeMuteState(); // Cargar preferencia de mute PRIMERO
+    initializeMuteState(); // Cargar preferencia de mute
     startGame(); // Iniciar el juego
-    console.log("Juego inicializado. Esperando interacción para música si es necesario.");
+    console.log("Juego inicializado. Esperando interacción...");
 
 }); // Fin del addEventListener('DOMContentLoaded')
