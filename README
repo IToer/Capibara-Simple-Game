@@ -1,0 +1,44 @@
+# Aventura del Capibara 🕹️
+
+Un sencillo juego web de estilo retro creado como un regalo especial. ¡Controla a un adorable capibara (carpincho), esquiva obstáculos y recoge monedas!
+
+![Gameplay Screenshot](placeholder.png)
+*(Recomendación: Reemplaza placeholder.png con una captura de pantalla real del juego)*
+
+## Descripción
+
+Este juego fue desarrollado con HTML, CSS y JavaScript puro (sin frameworks) con el objetivo de crear una experiencia simple y divertida inspirada en los juegos de aventura de los años 90. El jugador controla un capibara que avanza por un camino en el bosque, debiendo moverse lateralmente para esquivar rocas y troncos que caen, mientras recoge monedas doradas para aumentar su puntuación y subir de nivel.
+
+## Características ✨
+
+*   Personaje principal: ¡Un capibara!
+*   Movimiento lateral para esquivar obstáculos (rocas y troncos).
+*   Recolección de monedas doradas.
+*   Sistema de puntuación.
+*   Sistema de niveles: La dificultad (velocidad de objetos) aumenta con cada nivel.
+*   Música de fondo estilo chiptune (con opción de silencio).
+*   Estilo visual retro/pixelado.
+
+## Cómo Jugar 🎮
+
+*   **Movimiento:** Usa las teclas de flecha **Izquierda (⬅️)** y **Derecha (➡️)** para mover al capibara.
+*   **Objetivo:** Esquiva las rocas y troncos. Si chocas, ¡pierdes! Recoge las monedas doradas para sumar puntos.
+*   **Reinicio:** Si pierdes, haz clic en cualquier lugar de la pantalla del juego para volver a empezar.
+*   **Música:** Usa el botón `🔊 Mute` / `🔇 Unmute` para controlar la música de fondo.
+
+## Cómo Ejecutar Localmente 💻
+
+1.  Clona o descarga este repositorio.
+2.  Asegúrate de tener los 4 archivos (`index.html`, `style.css`, `script.js`, y el archivo de música, ej. `game-music.ogg`) en la misma carpeta.
+3.  Abre el archivo `index.html` en tu navegador web preferido (Chrome, Firefox, Edge, etc.).
+4.  ¡A jugar!
+
+## Tecnologías Utilizadas 🛠️
+
+*   HTML5 (Canvas API para los gráficos)
+*   CSS3
+*   JavaScript (Vanilla JS - Sin librerías externas)
+
+## Licencia 📄
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
