@@ -12,10 +12,14 @@
 <body>
     <h1>Aventura del Capibara</h1>
 
-    <div id="game-info">
-        <span>PUNTOS: <span id="score">0</span></span>
-        <span class="separator">|</span>
-        <span>NIVEL: <span id="level">1</span></span>
+    <div id="game-ui-top"> <!-- Nuevo contenedor para info y botón -->
+        <div id="game-info">
+            <span>PUNTOS: <span id="score">0</span></span>
+            <span class="separator">|</span>
+            <span>NIVEL: <span id="level">1</span></span>
+        </div>
+        <!-- Botón para silenciar/activar música -->
+        <button id="mute-button">🔊 Mute</button>
     </div>
 
     <div id="canvas-container">
@@ -25,10 +29,9 @@
 
     <p id="instructions">Usa ⬅️ y ➡️ para moverte. Clic para reiniciar si pierdes.</p>
 
-    <!-- Etiqueta de Audio para la música de fondo -->
-    <!-- ASEGÚRATE de que el 'src' coincida con el nombre EXACTO de tu archivo de música -->
+    <!-- Etiqueta de Audio (sin cambios) -->
     <audio id="background-music" src="game-music.mp3" loop preload="auto"></audio>
-    <!-- Si tu archivo es mp3, usa: <audio id="background-music" src="game-music.mp3" loop preload="auto"></audio> -->
+    <!-- O: <audio id="background-music" src="game-music.mp3" loop preload="auto"></audio> -->
 
     <script src="script.js"></script>
 </body>
