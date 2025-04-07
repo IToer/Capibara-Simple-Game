@@ -1,0 +1,75 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Alinear al inicio */
+    align-items: center;
+    min-height: 100vh;
+    background-color: #2d2d2d; /* Fondo oscuro grisáceo */
+    font-family: 'Press Start 2P', cursive; /* Fuente pixelada */
+    color: #ffffff; /* Texto blanco por defecto */
+    margin: 0;
+    padding-top: 20px; /* Espacio arriba */
+}
+
+h1 {
+    color: #ffcc00; /* Amarillo dorado */
+    text-shadow: 2px 2px #000000;
+    margin-bottom: 15px;
+    font-size: 24px; /* Tamaño adecuado para la fuente */
+}
+
+/* Contenedor para información del juego (Puntos y Nivel) */
+#game-info {
+    font-size: 14px; /* Tamaño más pequeño para info */
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo negro semitransparente */
+    padding: 8px 15px;
+    border: 3px ridge #cccccc; /* Borde estilo 90s */
+    margin-bottom: 15px;
+    display: inline-block; /* Para que se ajuste al contenido */
+    text-shadow: 1px 1px #000000;
+}
+
+#game-info .separator {
+    margin: 0 10px; /* Espacio alrededor del separador */
+}
+
+/* Contenedor del canvas para posicionar el mensaje de Game Over */
+#canvas-container {
+    position: relative; /* Necesario para elementos hijos absolutos */
+    width: 406px; /* Ancho del canvas + bordes (400 + 3*2) */
+    height: 506px; /* Alto del canvas + bordes (500 + 3*2) */
+    margin-bottom: 15px; /* Espacio antes de instrucciones */
+}
+
+canvas {
+    border: 3px solid #cccccc; /* Borde gris claro, como monitor viejo */
+    display: block;
+    /* El fondo lo dibuja JS */
+    box-shadow: inset 0 0 10px #000000, 3px 3px 5px rgba(0,0,0,0.5); /* Sombra interior y exterior */
+}
+
+p#instructions {
+    color: #aaaaaa; /* Gris claro */
+    font-size: 12px;
+}
+
+/* Mensaje de Game Over con estilo 90s */
+.game-over-text {
+    position: absolute;
+    /* Centrado sobre el canvas (dentro de #canvas-container) */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px; /* Tamaño grande */
+    color: #ff4136; /* Rojo brillante */
+    background-color: rgba(0, 0, 0, 0.85); /* Fondo negro más opaco */
+    padding: 20px 30px;
+    border: 4px outset #ffffff; /* Borde 3D blanco */
+    text-align: center;
+    display: none; /* Oculto por defecto */
+    font-weight: bold; /* Ya lo aplica la fuente, pero por si acaso */
+    z-index: 10;
+    white-space: nowrap;
+    text-shadow: 2px 2px #000000;
+}
